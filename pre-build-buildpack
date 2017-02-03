@@ -13,14 +13,15 @@ if [ -f $DIR/apt-repositories ]; then
     apt-get update
     apt-get install -y software-properties-common apt-transport-https
     cat "$DIR/apt-repositories" | while read repository; do
-        if [ -n "$repository" ]; then
+        if [ -n "\$repository" ]; then
             add-apt-repository -y "\$repository"
         fi
     done
+    apt-get update
 fi
 if [ -f $DIR/apt-debconf ]; then
     cat "$DIR/apt-debconf" | while read conf; do
-        if [ -n "$conf" ]; then
+        if [ -n "\$conf" ]; then
             echo \$conf | debconf-set-selections
         fi
     done
@@ -33,10 +34,11 @@ if [ -f $DIR/apt-packages ]; then
 fi
 if [ -d $DIR/dpkg-packages ]; then
     for pkg in $DIR/dpkg-packages/*.deb; do
-        dpkg -i \$pkg
+        dpkg -i "\$pkg"
         echo "-----> Injected package: \$pkg"
     done
 fi
+apt-get upgrade -y
 sleep 1 # wait so that docker run has not exited before docker attach
 EOF
 )
