@@ -9,6 +9,7 @@ DIR=/app
 
 COMMAND=$(cat <<EOF
 export DEBIAN_FRONTEND=noninteractive
+
 if [ -f $DIR/apt-repositories ]; then
     apt-get update
     apt-get install -y software-properties-common apt-transport-https
@@ -32,9 +33,10 @@ if [ -f $DIR/apt-packages ]; then
     apt-get install -y \$PACKAGES
     echo "-----> Injected packages: \$PACKAGES"
 fi
-apt-get update
-apt-get upgrade -y
+
 if [ -d $DIR/dpkg-packages ]; then
+    apt-get update
+    apt-get upgrade -y
     for pkg in $DIR/dpkg-packages/*.deb; do
         DEBIAN_FRONTEND=noninteractive dpkg -i "\$pkg"
         echo "-----> Injected package: \$pkg"
